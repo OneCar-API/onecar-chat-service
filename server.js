@@ -87,6 +87,6 @@ io.on('connection', socket =>{
     });
 });
 
-server.listen(3000, () => {
+server.listen(9000, () => {
     console.log("Servidor iniciado")
 });
