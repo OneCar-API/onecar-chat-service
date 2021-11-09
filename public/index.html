@@ -26,9 +26,10 @@
         let from_name = urlParams.get('from_name');
         let from_id = urlParams.get('from_id');
         let to_id = urlParams.get('to_id');
+        let to_name = urlParams.get('to_name');
         let room_id = [from_id, to_id].sort();
 
-        document.getElementById("userLabel").textContent = from_name;
+        document.getElementById("userLabel").textContent = `Olá, ${from_name}. Esta é sua conversa com ${to_name}`;
 
         function renderMessage(message){
             if (message.from_name == from_name) {
