@@ -20,7 +20,7 @@
     </form>
 
     <script type="text/javascript">
-        var socket = io('http://localhost:3000');
+        var socket = io();
 
         const urlParams = new URLSearchParams(window.location.search);
         let from_name = urlParams.get('from_name');
@@ -31,6 +31,9 @@
         document.getElementById("userLabel").textContent = from_name;
 
         function renderMessage(message){
+            if (message.from_name == from_name) {
+                message.from_name = "Você"
+            }
             $('.messages').append('<div class="message"><strong>'+ message.from_name +'</strong>: '+ message.text +'</div>');
         }
 
@@ -63,8 +66,8 @@
                     text,
                 };
 
-                renderMessage(messageObject);
                 socket.emit('sendMessage', messageObject);
+                $('input[name=message]').val() = '';
             }
         });
     </script>
