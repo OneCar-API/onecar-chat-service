@@ -16,7 +16,8 @@
     <form id="chat">
         <label id="userLabel"></label>
         <div class="messages"></div>
-        <input type="text" name="message" placeholder="Digite sua mensagem...">
+        <input id="messageInput" type="text" name="message" placeholder="Digite sua mensagem...">
+
         <button type="submit">Enviar</button>
     </form>
 
@@ -28,7 +29,8 @@
         let from_id = urlParams.get('from_id');
         let to_id = urlParams.get('to_id');
         let to_name = urlParams.get('to_name');
-        let room_id = [from_id, to_id].sort();
+        let idsUsers = [from_id, to_id].sort();
+        let room_id = idsUsers[0] + idsUsers[1];
 
         document.getElementById("userLabel").textContent = `Olá, ${from_name}. Esta é sua conversa com ${to_name}`;
 
@@ -41,7 +43,6 @@
 
         socket.on('previousMessages', function(messages){
             if (messages) {
-                console.log("MENSAGENS NO FRONT" + messages);
                 for (message of messages) {
                     renderMessage(message);
                 }
@@ -54,10 +55,7 @@
 
         $('#chat').submit(function(event){//envia a mensagem
             event.preventDefault();//não envia o formulario
-            var from_name = document.getElementById("userLabel").textContent;
             var text = $('input[name=message]').val();
-
-            console.log(text);
 
             if (text.length) {
                 var messageObject = {
@@ -69,7 +67,7 @@
                 };
 
                 socket.emit('sendMessage', messageObject);
-                $('input[name=message]').val() = '';
+                document.getElementById("messageInput").value = '';
             }
         });
     </script>
