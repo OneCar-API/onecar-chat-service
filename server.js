@@ -57,7 +57,6 @@ io.on('connection', socket =>{
     if (room_id) {
         socket.join(room_id);
     }
-    //socket.join(room_id);
 
     socket.on('getPreviousMessages', data => {
         if (!data.room_id) {
