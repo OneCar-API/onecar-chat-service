@@ -21,23 +21,24 @@ input {
     border: 1px solid rgb(221, 221, 221);
     height: 50px;
     padding: 0 20px;
-    font-size: 14px;
+    font-size: 20px;
 }
   
 button {
     width: 600px;
     height: 50px;
-    font-size: 14px;
-    background: #069;
+    font-size: 30px;
+    background: #5e9dbc;
     text-align: center;
     line-height: 50px;
-    font-weight: bold;
+    border: 0;
     color: #FFF;
     margin-top: 10px;
+    border-radius: 5px;
 }
   
 .messages {
-    background-image: url("onecar.png");
+    background-image: url("onecar.png") ;
     background-position: center;
     background-size: 50%;
     background-repeat: no-repeat;
@@ -46,4 +47,20 @@ button {
     margin: 20px 0;
     border: 1px solid #ddd;
     padding: 20px;
+}
+
+.message{
+   font-size: 20px; 
+   font-family: Arial, Helvetica, sans-serif;
+}
+
+label{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+}
+
+.top-bar {
+    width: 100%;
+    height: 75px;
+    background: #e5e5e5;
 }
