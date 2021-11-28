@@ -1,14 +1,14 @@
-const { Socket } = require('dgram');//contém informações para o roteamento do equipamento de origem e o de destino
-const express = require('express');//templates, servem para criarmos esqueletos HTML
-const path = require('path');//padrão do node
+const { Socket } = require('dgram');
+const express = require('express');
+const path = require('path');
 
-const app = express();//criando a aplicação
-const server = require('http').createServer(app);//define o protocolo http
-const io = require('socket.io')(server);//define o protocolo wss pro websocket
+const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 
-app.use(express.static(path.join(__dirname, 'public')));//pasta que define onde fica os arquivos publicos(frontend)
-app.set('views', path.join(__dirname, 'public'));//define onde ficará as views
-app.engine('html', require('ejs').renderFile);//entende as views como html com ejs
+app.use(express.static(path.join(__dirname, 'public')));
+app.set('views', path.join(__dirname, 'public'));
+app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');//
 
 // Database
@@ -27,18 +27,6 @@ const Message = mongoose.model('Message',
   text: String,
   sent_at: Date,
 });
-
-async function findMessagesByRoom(room_id) {
-  const messages = await Message.find({room_id: room_id}, (error, data) => {
-    if (error) {
-        console.log(error);
-    }
-    console.log('DATA');
-    console.log(data);
-    return data;
-  });
-  return messages;
-}
 
 // Express e socket
 

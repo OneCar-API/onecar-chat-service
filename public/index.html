@@ -53,8 +53,8 @@
             renderMessage(message);
         });
 
-        $('#chat').submit(function(event){//envia a mensagem
-            event.preventDefault();//não envia o formulario
+        $('#chat').submit(function(event){
+            event.preventDefault(); //não envia o formulario
             var text = $('input[name=message]').val();
 
             if (text.length) {
@@ -70,20 +70,6 @@
                 document.getElementById("messageInput").value = '';
             }
         });
-
-        async function getMessages(room_id) {
-            var request = new XMLHttpRequest();
-
-            request.open("GET", `http://localhost:9000/messages/${room_id}`, true);
-            request.setRequestHeader("Content-Type", "application/json");
-            request.send();   
-
-            request.onreadystatechange = function (e) {
-                const response = JSON.parse(request.response);
-            };
-        };
-
-        getMessages(room_id);
     </script>
 </body>
 </html>
