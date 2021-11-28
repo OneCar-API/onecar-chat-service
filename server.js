@@ -33,12 +33,14 @@ async function findMessagesByRoom(room_id) {
     if (error) {
         console.log(error);
     }
-    return messages;
-  })
+    console.log('DATA');
+    console.log(data);
+    return data;
+  });
+  return messages;
 }
 
 // Express e socket
-
 
 let params = {};
 
@@ -58,13 +60,14 @@ io.on('connection', socket =>{
         socket.join(room_id);
     }
 
-    socket.on('getPreviousMessages', data => {
-        if (!data.room_id) {
-            return;
+    Message.find({ room_id }, (error, data) => {
+        if (error) {
+            console.log(error);
+        } else {
+            socket.emit('previousMessages', data);
         }
-        var messages = findMessagesByRoom(room_id);
-        socket.emit('previousMessages', messages);        
-    })
+    });
+
 
     socket.on('sendMessage', data =>{
         const message = new Message({
@@ -79,7 +82,6 @@ io.on('connection', socket =>{
 
         message.save(function (err) {
             if (err) console.log(err);
-            // saved!
           });
 
         io.to(room_id).emit('receivedMessage', message);

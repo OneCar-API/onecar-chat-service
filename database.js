@@ -16,12 +16,12 @@ const Message = mongoose.model('Message',
   },
 });
 
-function findMessagesByRoom(room_id) {
-  const messages = Message.find({room_id: room_id}, (error, data) => {
+async function findMessagesByRoom(room_id) {
+  await Message.find({room_id: room_id}, (error, data) => {
     if (error) {
       console.log(error);
     } else {
-      console.log(data);
+      return data;
     }
   })
 }
