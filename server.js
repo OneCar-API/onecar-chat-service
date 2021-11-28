@@ -46,15 +46,16 @@ io.on('connection', socket =>{
 
     if (room_id) {
         socket.join(room_id);
-    }
 
-    Message.find({ room_id }, (error, data) => {
-        if (error) {
-            console.log(error);
-        } else {
-            socket.emit('previousMessages', data);
-        }
-    });
+        Message.find({ room_id }, (error, data) => {
+            if (error) {
+                console.log(error);
+            } else {
+                socket.emit('previousMessages', data);
+            }
+        });
+    }
+    
 
 
     socket.on('sendMessage', data =>{
