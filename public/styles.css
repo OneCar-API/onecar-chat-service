@@ -38,6 +38,17 @@ button {
 }
   
 .messages {
+    background-position: center;
+    background-size: 50%;
+    background-repeat: no-repeat;
+    width: 600px;
+    height: 400px;
+    margin: 20px 0;
+    border: 1px solid #ddd;
+    padding: 20px;
+}
+
+.chats {
     background-image: url("onecar.png") ;
     background-position: center;
     background-size: 50%;
@@ -48,6 +59,11 @@ button {
     border: 1px solid #ddd;
     padding: 20px;
 }
+
+.oneChat{
+    font-size: 20px; 
+    font-family: Arial, Helvetica, sans-serif;
+ }
 
 .message{
    font-size: 20px; 

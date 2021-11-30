@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneCar - Minhas Conversas</title>
+    <link rel = "shortcut icon" href="favicon.png" type="image/png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+  <div class="chats"></div>
+  
+</body>
+
+<script type="text/javascript">
+  var socket = io();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  let username = urlParams.get('username');
+
+  function renderChat(chat){
+//    $('.chats').append('<div class="oneChat"><strong> Conversa com '+ chat.to_name +' </strong></div>');
+    const url = `http://localhost:9000/chat?from_name=${chat.from_name}&from_id=${chat.from_id}&to_id=${chat.to_id}&to_name=${chat.to_name}`;
+    $('.chats').append('<a href="' + url + '"><strong> Conversa com '+ chat.to_name +' </strong></a>');
+  }
+
+  socket.on('previousChats', function(chats){
+    if (chats) {
+      for (chat of chats) {
+        renderChat(chat);
+      }
+    }
+  });
+
+</script>
+</html>

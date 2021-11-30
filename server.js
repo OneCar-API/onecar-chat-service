@@ -28,25 +28,38 @@ const Message = mongoose.model('Message',
   sent_at: Date,
 });
 
+const Room = mongoose.model('Room', 
+{
+  room_id: String,
+  from_id: String,
+  from_name: String,
+  to_id: String,
+  to_name: String,
+});
+
 // Express e socket
 
 let params = {};
+let user_id;
 
 app.use('/chat', (req, res) => {
     params = req.query;
     res.render('index.html');//renderiza a view
 });
 
+app.use('/chats', (req, res) => {
+    user_id = req.query.user_id;
+    res.render('chats.html');//renderiza a view
+});
+
 
 io.on('connection', socket =>{
     console.log(`Socket conectado: ${socket.id}`)//conecta o socket
-
     let idsUsers = [new String(params.to_id), new String(params.from_id)].sort();
     let room_id = idsUsers[0] + idsUsers[1];
 
     if (room_id) {
         socket.join(room_id);
-
         Message.find({ room_id }, (error, data) => {
             if (error) {
                 console.log(error);
@@ -55,8 +68,39 @@ io.on('connection', socket =>{
             }
         });
     }
-    
 
+    Room.find({ room_id, from_id: params.from_id }, (error, data) => {
+        if (error) {
+            console.log(error);
+            return;
+        }
+        if (data.length < 1) {
+            const newRoom = new Room({
+                room_id,
+                from_id: params.from_id,
+                from_name: params.from_name,
+                to_id: params.to_id,
+                to_name: params.to_name,
+            });
+    
+            newRoom.save(function (err) {
+                if (err) console.log(err);
+              });
+        }
+    });
+
+    if (user_id) {
+        Room.find({from_id: user_id}, (error, data) => {
+            if (error) {
+                console.log(error);
+                socket.emit('previousChats', []);
+                return;
+            }
+            if (data) {
+                socket.emit('previousChats', data);
+            }
+        });
+    }
 
     socket.on('sendMessage', data =>{
         const message = new Message({
@@ -72,8 +116,10 @@ io.on('connection', socket =>{
         message.save(function (err) {
             if (err) console.log(err);
           });
-
-        io.to(room_id).emit('receivedMessage', message);
+        if (room_id) {
+            console.log(room_id);
+            io.to(room_id).emit('receivedMessage', message);
+        }
     });
 });
 
