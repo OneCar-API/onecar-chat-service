@@ -21,7 +21,7 @@
   var socket = io();
 
   const urlParams = new URLSearchParams(window.location.search);
-  let username = urlParams.get('username');
+  let user_id = urlParams.get('user_id');
 
   function renderChat(chat){
 //    $('.chats').append('<div class="oneChat"><strong> Conversa com '+ chat.to_name +' </strong></div>');
@@ -34,6 +34,13 @@
       for (chat of chats) {
         renderChat(chat);
       }
+    }
+  });
+
+  socket.on('notification', (notification) => {
+    if (notification) {
+      console.log(notification);
+      alert(`Nova mensagem de ${notification.from_name}: ${notification.text}`);
     }
   });
 

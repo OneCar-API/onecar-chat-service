@@ -39,12 +39,18 @@ const Room = mongoose.model('Room',
 
 // Express e socket
 
-let params = {};
+let params = {
+    from_id: String,
+    to_id: String,
+    from_name: String,
+    to_name: String,
+};
+
 let user_id;
 
 app.use('/chat', (req, res) => {
     params = req.query;
-    res.render('index.html');//renderiza a view
+    res.render('testeIndex.html');//renderiza a view
 });
 
 app.use('/chats', (req, res) => {
@@ -82,14 +88,29 @@ io.on('connection', socket =>{
                 to_id: params.to_id,
                 to_name: params.to_name,
             });
-    
-            newRoom.save(function (err) {
-                if (err) console.log(err);
-              });
+
+            const newRoomCopy = new Room({
+                room_id,
+                to_id: params.from_id,
+                to_name: params.from_name,
+                from_id: params.to_id,
+                from_name: params.to_name,
+            });
+
+            if (room_id && params.from_id && params.to_id) {
+                newRoom.save(function (err) {
+                    if (err) console.log(err);
+                });
+
+                newRoomCopy.save(function (err) {
+                    if (err) console.log(err);
+                });
+            }
         }
     });
 
     if (user_id) {
+        socket.join(user_id);
         Room.find({from_id: user_id}, (error, data) => {
             if (error) {
                 console.log(error);
@@ -115,10 +136,12 @@ io.on('connection', socket =>{
 
         message.save(function (err) {
             if (err) console.log(err);
-          });
-        if (room_id) {
-            console.log(room_id);
+        });
+
+        if (room_id && data) {
             io.to(room_id).emit('receivedMessage', message);
+            const notification = { from_name: data.from_name, text: data.text };
+            io.to(data.to_id).emit('notification', notification);
         }
     });
 });

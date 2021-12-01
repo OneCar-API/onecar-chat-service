@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="stylesTest.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+
+</head>
+<body>
+    <div class="chat_window">
+        <div class="top_menu">
+            <div class="title">Chat</div>
+        </div>
+        <ul class="messages">
+            
+        </ul>
+        <div class="bottom_wrapper clearfix">
+            <div class="message_input_wrapper">
+                <input class="message_input" placeholder="Digite sua mensagem..." />
+            </div>
+            <div class="send_message" onclick="handleSendMessage()">
+                <div class="icon"></div>
+                <div class="text">Enviar</div>
+            </div>
+        </div>
+    </div>
+    <div class="message_template">
+        <li class="message">
+            <div class="avatar"></div>
+            <div class="text_wrapper">
+                <div class="text"></div>
+            </div>
+        </li>
+    </div>
+</body>
+
+<script>
+
+    var socket = io();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let from_name = urlParams.get('from_name');
+    let from_id = urlParams.get('from_id');
+    let to_id = urlParams.get('to_id');
+    let to_name = urlParams.get('to_name');
+    let idsUsers = [from_id, to_id].sort();
+    let room_id = idsUsers[0] + idsUsers[1];
+
+    function getReceivedMessage(text, date) {
+        date = new Date(date);
+        date = date.getHours() + ':' + date.getMinutes() + ' - ' + date.getDate() + '/' + date.getMonth();
+        var receivedMessage = `
+            <li class="message left appeared">
+                <div class="avatar"></div>
+                <div class="text_wrapper">
+                    <div class="text">${text}</div>
+                    <div class="sent_at">${date}</div>
+                </div>
+            </li>`
+        return receivedMessage;
+    }
+
+    function getSentMessage(text, date) {
+        date = new Date(date);
+        date = date.getHours() + ':' + date.getMinutes() + ' - ' + date.getDate() + '/' + date.getMonth();
+        var sentMessage = `
+            <li class="message right appeared">
+                <div class="avatar"></div>
+                <div class="text_wrapper">
+                    <div class="text">${text}</div>
+                    <div class="sent_at">${date}</div>
+                </div>
+            </li>`
+        return sentMessage;
+    }
+    
+    function renderMessage(message){
+        let messageElement;
+        if (message.from_name == from_name) {
+            messageElement = getSentMessage(message.text, message.sent_at);
+        } else {
+            messageElement = getReceivedMessage(message.text, message.sent_at);
+        }
+        $('.messages').append(messageElement);
+    }
+
+    function handleSendMessage(){
+        var text = $('input[class=message_input]').val();
+
+        if (text.length) {
+            var messageObject = {
+                room_id,
+                from_id: from_id,
+                to_id: to_id,
+                from_name,
+                text,
+            };
+
+            socket.emit('sendMessage', messageObject);
+            document.getElementsByClassName('message_input')[0].value = '';
+        }
+    };
+
+    socket.on('previousMessages', function(messages){
+        if (messages) {
+            for (message of messages) {
+                renderMessage(message);
+            }
+        }
+    });
+
+    socket.on('receivedMessage', function(message) {
+        renderMessage(message);
+    });
+
+</script>
+</html>
